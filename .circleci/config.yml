@@ -1,0 +1,45 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~project/calango
+
+jobs:
+  install:
+    <<: *defaults
+    docker:
+      - image: circleci/node:stretch
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - calango
+
+  test-unit:
+    <<: *defaults
+    docker:
+      - image: circleci/node:stretch
+      - image: arangodb:3.5.1
+    steps:
+      - attach_workspace:
+        at: ~/project
+      - run: yarn test:unit
+
+workflows:
+  version: 2
+  install-and-test:
+    jobs:
+      - install
+      - test-unit:
+        requires:
+          - install

@@ -28,53 +28,24 @@ export interface ConnectionOptions extends ArangoConfig {
 }
 
 export class Connection {
-  public options: ConnectionOptions;
+  public options: Partial<ConnectionOptions>;
   public db: Database;
 
   constructor(options: Partial<ConnectionOptions>) {
-    // this.options = {
-    //   url: "arangodb://localhost:8529",
-    //   username: "root",
-    //   password: "root",
-    //   database: "db",
-    //   syncronize: false,
-    //   log: true,
-    //   entities: [],
-    //   ...options
-    // };
+    this.options = {
+      url: "arangodb://localhost:8529",
+      username: "root",
+      password: "root",
+      database: "db",
+      syncronize: false,
+      log: true,
+      entities: [],
+      ...options
+    };
   }
 
   async sync() {
-    const { entities } = this.options
 
-    if (!(await this.db.exists())) {
-      await this.db.createDatabase(this.options.database)
-    }
-
-    const entityLen = entities.length
-    
-    for (let i = 0; i < entityLen; i++) {
-      const entity = entities[i]
-      const name = Reflect.getMetadata(ENTITY_ATTRIBUTES, entity)
-      const indexes = Reflect.getMetadata(ENTITY_INDEXES, entity)
-      const collection = this.db.collection(name)
-
-      if (!(await collection.exists())) {
-        this.log(`Creating "${name}" collection...`)
-        await collection.create({
-          waitForSync: !!Reflect.getMetadata(ENTITY_WAIT_FOR_SYNC, entity),
-        })
-      }
-
-      const collectionIndexes: ArangoIndex[] = await collection.indexes()
-      
-      for (let index of indexes) {
-        if (collectionIndexes.find(idx => index.id === idx.id || index.name === idx.name)) {
-          continue
-        }
-        this.log(`Creating Index "${index.name}" in "${name}" collection...`)
-      }
-    }
   }
 
   log (...args) {

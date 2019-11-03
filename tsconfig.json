@@ -1,6 +1,10 @@
 {
-  "emitDecoratorMetadata": true,
-  "experimentalDecorators": true,
-  "include": ["src"],
+  "include": ["src", "__test__"],
   "exclude": ["node_modules"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "es5"
+  }
 }

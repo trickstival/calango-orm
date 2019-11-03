@@ -5,9 +5,21 @@
   "main": "dist/index.js",
   "author": "Salomao Neto",
   "license": "MIT",
+  "scripts": {
+    "test:unit": "jest --setupFiles ./__test__/setup.ts",
+    "testw": "yarn test:unit --watchAll",
+    "circle:test": "circleci local execute --job "
+  },
   "dependencies": {
     "arangojs": "^6.12.0",
+    "dotenv": "^8.2.0",
     "reflect-metadata": "^0.1.13",
+    "type-fest": "^0.8.1",
     "typescript": "^3.6.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.21",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0"
   }
 }
